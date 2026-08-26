@@ -1,0 +1,200 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  pubDate?: Date;
+  updatedDate?: Date;
+  isPost?: boolean;
+}
+
+const { title, description, pubDate, updatedDate, isPost = false } = Astro.props;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const siteName = 'Equity Drift';
+
+// Article structured data — only emitted on post pages.
+// This is what qualifies a page for rich results / "People also ask" style treatment.
+const articleSchema = isPost
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: title,
+      description,
+      datePublished: pubDate?.toISOString(),
+      dateModified: (updatedDate ?? pubDate)?.toISOString(),
+      author: { '@type': 'Person', name: siteName },
+      publisher: { '@type': 'Organization', name: siteName },
+      mainEntityOfPage: canonicalURL.toString(),
+    }
+  : null;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <title>{title} · {siteName}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="alternate" type="application/rss+xml" title={siteName} href="/rss.xml" />
+
+    <!-- Open Graph / social -->
+    <meta property="og:type" content={isPost ? 'article' : 'website'} />
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+
+    {articleSchema && (
+      <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+    )}
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* ---------- Design tokens, pulled from the GG Poker client theme ---------- */
+      :root {
+        /* Table felt: deep violet, the oval-table purple, not generic near-black */
+        --felt: #1c1433;
+        --felt-deep: #120c22;
+        --felt-line: rgba(226, 216, 245, 0.12);
+        /* Content panels: one shade up from the felt, like a player pod */
+        --panel: #251b41;
+        --panel-raised: #2f2350;
+        --ink: #f1ecf9;
+        --ink-soft: #a99cc7;
+        --ink-dim: #776a99;
+        /* Jackpot gold — the Bad Beat signage color */
+        --gold: #e8b23f;
+        --gold-soft: #c99a3a;
+        /* Neon glow accents lifted from the active-player rings */
+        --cyan: #4fd8e0;
+        --magenta: #e0499b;
+        /* Four-color deck, used sparingly as small tags/accents, never as body text */
+        --suit-club: #3fc47a;
+        --suit-diamond: #4aa8f0;
+        --suit-heart: #f0564a;
+        --rule: rgba(226, 216, 245, 0.16);
+      }
+
+      * { box-sizing: border-box; }
+
+      html {
+        background: var(--felt-deep);
+        color-scheme: dark;
+      }
+
+      body {
+        margin: 0;
+        font-family: 'Inter', -apple-system, sans-serif;
+        background:
+          radial-gradient(ellipse 90% 50% at 15% -10%, rgba(224, 73, 155, 0.10), transparent 55%),
+          radial-gradient(ellipse 90% 50% at 85% 0%, rgba(79, 216, 224, 0.09), transparent 55%),
+          var(--felt);
+        background-attachment: fixed;
+        color: var(--ink);
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      h1, h2, h3, .display {
+        font-family: 'Space Grotesk', 'Inter', sans-serif;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        color: var(--ink);
+      }
+
+      code, .mono, .stat-value {
+        font-family: 'IBM Plex Mono', ui-monospace, monospace;
+      }
+
+      a { color: var(--cyan); text-decoration-color: rgba(79, 216, 224, 0.4); }
+      a:hover { color: var(--gold); text-decoration-color: rgba(232, 178, 63, 0.5); }
+
+      a:focus-visible,
+      button:focus-visible {
+        outline: 2px solid var(--gold);
+        outline-offset: 2px;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+      }
+
+      .site-header {
+        border-bottom: 1px solid var(--felt-line);
+        background: rgba(9, 6, 18, 0.55);
+        backdrop-filter: blur(6px);
+      }
+      .site-header nav {
+        max-width: 72rem;
+        margin: 0 auto;
+        padding: 1.5rem 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+      }
+      .site-header .brand {
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 700;
+        font-size: 1.2rem;
+        color: var(--ink);
+        text-decoration: none;
+        letter-spacing: -0.01em;
+      }
+      .site-header .brand::before {
+        content: '♣';
+        color: var(--gold);
+        margin-right: 0.45em;
+        text-shadow: 0 0 12px rgba(232, 178, 63, 0.55);
+      }
+      .site-header .links a {
+        margin-left: 1.5rem;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.8rem;
+        letter-spacing: 0.03em;
+        text-decoration: none;
+        color: var(--ink-soft);
+      }
+      .site-header .links a:hover { color: var(--cyan); }
+
+      .site-footer {
+        border-top: 1px solid var(--felt-line);
+        margin-top: 4rem;
+        padding: 2.5rem 1.5rem;
+        text-align: center;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.78rem;
+        color: var(--ink-dim);
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <nav>
+        <a class="brand" href="/">Equity Drift</a>
+        <div class="links">
+          <a href="/">Posts</a>
+          <a href="/rss.xml">RSS</a>
+        </div>
+      </nav>
+    </header>
+
+    <slot />
+
+    <footer class="site-footer">
+      &copy; {new Date().getFullYear()} Equity Drift — hand-tracked PLO study notes.
+    </footer>
+  </body>
+</html>

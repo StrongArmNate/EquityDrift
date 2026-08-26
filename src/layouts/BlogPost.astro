@@ -1,0 +1,175 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+interface Stat { label: string; value: string; }
+interface Props {
+  title: string;
+  description: string;
+  pubDate: Date;
+  updatedDate?: Date;
+  tags?: string[];
+  stats?: Stat[];
+}
+
+const { title, description, pubDate, updatedDate, tags = [], stats = [] } = Astro.props;
+
+const dateFmt = (d: Date) =>
+  d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+---
+
+<BaseLayout title={title} description={description} pubDate={pubDate} updatedDate={updatedDate} isPost>
+  <main class="post-wrap">
+    {stats.length > 0 && (
+      <aside class="ledger-rail" aria-label="Hand tracker summary">
+        <p class="ledger-title">Tracked</p>
+        {stats.map((s) => (
+          <div class="ledger-row">
+            <span class="ledger-value stat-value">{s.value}</span>
+            <span class="ledger-label">{s.label}</span>
+          </div>
+        ))}
+      </aside>
+    )}
+
+    <article class="post">
+      <header class="post-header">
+        <h1>{title}</h1>
+        <p class="post-meta mono">
+          {dateFmt(pubDate)}
+          {updatedDate && <> · updated {dateFmt(updatedDate)}</>}
+          {tags.length > 0 && (
+            <>
+              {' '}·{' '}
+              {tags.map((t) => <span class="tag">#{t}</span>)}
+            </>
+          )}
+        </p>
+      </header>
+
+      <div class="prose">
+        <slot />
+      </div>
+    </article>
+  </main>
+</BaseLayout>
+
+<style>
+  .post-wrap {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 3.5rem 1.5rem 5rem;
+    display: grid;
+    grid-template-columns: 12rem 1fr;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  /* Ledger rail reads as a row of HUD nameplates, like the BB readouts
+     under each player pod at the table — not a plain sidebar list */
+  .ledger-rail {
+    position: sticky;
+    top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .ledger-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.66rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    margin: 0 0 0.15rem;
+  }
+  .ledger-row {
+    background: var(--panel-raised);
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    padding: 0.6rem 1rem;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 8px 20px -12px rgba(6, 4, 14, 0.7);
+  }
+  .ledger-row:nth-child(2) { border-color: rgba(79, 216, 224, 0.45); }
+  .ledger-row:nth-child(3) { border-color: rgba(224, 73, 155, 0.4); }
+  .ledger-row:nth-child(4) { border-color: rgba(232, 178, 63, 0.45); }
+  .ledger-value {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--gold);
+    line-height: 1.1;
+  }
+  .ledger-label {
+    font-size: 0.68rem;
+    color: var(--ink-soft);
+  }
+
+  /* The article is a player-pod panel, same surface as the ledger rail */
+  .post {
+    background: var(--panel);
+    border: 1px solid var(--felt-line);
+    border-radius: 10px;
+    padding: 3rem clamp(1.5rem, 4vw, 4rem);
+    box-shadow: 0 30px 70px -30px rgba(4, 2, 10, 0.75);
+  }
+
+  .post-header h1 {
+    font-size: clamp(1.9rem, 3.4vw, 2.7rem);
+    line-height: 1.14;
+    margin: 0 0 0.85rem;
+  }
+  .post-meta {
+    color: var(--ink-dim);
+    font-size: 0.78rem;
+  }
+  .tag {
+    display: inline-block;
+    margin-right: 0.6em;
+    color: var(--cyan);
+  }
+
+  .prose {
+    font-size: 1.08rem;
+    max-width: 42rem;
+    margin-top: 2rem;
+    color: var(--ink-soft);
+  }
+  .prose :global(h2) {
+    margin-top: 2.5rem;
+    font-size: 1.5rem;
+    color: var(--ink);
+    border-top: 1px solid var(--rule);
+    padding-top: 1.5rem;
+  }
+  .prose :global(strong) { color: var(--ink); }
+  .prose :global(a) { text-decoration-underline: var(--cyan); }
+
+  /* Inline stat callouts — numbers pulled from the prose, e.g. a
+     blockquote in markdown. Styled after the "Total Pot" banner
+     on the table: pill shape, gold mono figures on a dark chip. */
+  .prose :global(blockquote) {
+    margin: 1.75rem 0;
+    padding: 1rem 1.4rem;
+    background: rgba(9, 6, 18, 0.5);
+    border: 1px solid rgba(232, 178, 63, 0.35);
+    border-radius: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.95rem;
+    color: var(--gold);
+  }
+
+  @media (max-width: 48rem) {
+    .post-wrap {
+      grid-template-columns: 1fr;
+      padding: 2rem 1rem 3.5rem;
+    }
+    .post { padding: 2rem 1.25rem; }
+    .ledger-rail {
+      position: static;
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+    .ledger-title { width: 100%; }
+    .ledger-row { flex: 1 1 auto; }
+  }
+</style>
