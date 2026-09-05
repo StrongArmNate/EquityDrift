@@ -1,0 +1,160 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="About &amp; Methodology"
+  description="Who writes Equity Drift, how the hand-data filters work, an honest note on sample sizes, and how affiliate links on this site are handled."
+>
+  <main class="about">
+    <section class="hero">
+      <p class="eyebrow mono">About this site</p>
+      <h1>The person, the process, the caveats</h1>
+      <p class="dek">
+        Equity Drift is one player checking his own study habits against his own hand
+        database, in public. Here's who's behind it, how the numbers are produced, and
+        where those numbers fall short.
+      </p>
+    </section>
+
+    <article class="panel">
+      <h2>Who writes this</h2>
+      <p>
+        Equity Drift is written by a single regulated-market Pot-Limit Omaha player —
+        micro-to-small-stakes, Ontario iGaming market, playing under the table name
+        RootsmanTilt. No coaching credentials, no claimed edge beyond what a given post's
+        data actually shows. The site exists because tracking software makes it possible
+        to check a study habit against reality instead of just trusting it, and because
+        writing the check-up down is a more useful study method than doing it silently.
+      </p>
+      <p>
+        This isn't a results-based brag site or a coaching funnel. When a mantra doesn't
+        hold up, that's the post.
+      </p>
+    </article>
+
+    <article class="panel">
+      <h2>How the research works</h2>
+      <p>
+        Every post starts with a specific, falsifiable filter run against hand history
+        logged in PokerTracker 4 — never a vibe or a memory of "how things usually go."
+        The general shape:
+      </p>
+      <ol>
+        <li>Pick one specific study mantra or rule of thumb.</li>
+        <li>Define a PT4 filter that isolates exactly the situation the mantra describes.</li>
+        <li>Report what the filtered hands actually show, including when it contradicts the mantra.</li>
+        <li>Pull a small number of representative hands to illustrate the pattern, not to cherry-pick the best-looking ones.</li>
+      </ol>
+      <p>
+        Because Ontario's regulated online market ring-fences each site's player pool
+        (a structural liquidity constraint, not a bankroll one), a smooth stake ladder
+        doesn't really exist here — PLO2 is well-populated, PLO5 is thin, and PLO10
+        effectively doesn't run. Early posts draw on a combined PLO2/PLO5 dataset for
+        that reason: it's the largest sample currently available, and it's used to prove
+        out the filtering method itself while volume builds at higher stakes. Posts will
+        move to higher-stakes data as specific findings call for it, and any post drawing
+        on a different stake mix says so.
+      </p>
+    </article>
+
+    <article class="panel callout">
+      <h2>A note on sample sizes</h2>
+      <p>
+        Poker numbers over small samples are noisy, and this site's numbers are often
+        small. A post built on 54 hands is a real, honestly-run check — it is not a
+        statistically reliable win rate, and it should not be read as one. Where a
+        finding is based on fewer hands than you'd want for confidence, that will be
+        stated in the post rather than left for you to guess at from the stats sidebar.
+      </p>
+      <p>
+        Nothing on this site is financial advice, a guarantee of results, or a substitute
+        for your own bankroll and risk decisions. Treat each post as a documented
+        experiment on one player's data, not as a universal strategy claim.
+      </p>
+    </article>
+
+    <article class="panel">
+      <h2>Affiliate disclosure</h2>
+      <p>
+        Some links on this site may be affiliate or rakeback-partner links, meaning
+        Equity Drift could earn a commission or rake-back share if you sign up or play
+        through them, at no extra cost to you. Any such link will be labelled as such
+        near where it appears. Affiliate relationships never determine what a post
+        concludes — the data is pulled and reported the same way whether or not a link
+        happens to be nearby, and a mantra that fails its own test gets reported as
+        failing regardless of who might advertise here.
+      </p>
+      <p>
+        As of this writing, no affiliate links are live on this site. This page will be
+        kept current if and when that changes.
+      </p>
+    </article>
+
+    <p class="contact mono">
+      Questions or corrections about a post's data or methodology? Open an issue on the
+      site's <a href="https://github.com/StrongArmNate/EquityDrift" target="_blank" rel="noopener noreferrer">GitHub repo</a>.
+    </p>
+  </main>
+</BaseLayout>
+
+<style>
+  .about { max-width: 50rem; margin: 0 auto; padding: 4rem 1.5rem 5rem; }
+
+  .hero { padding: 2.75rem clamp(1.5rem, 4vw, 3.5rem) 1.5rem; }
+  .eyebrow {
+    font-size: 0.75rem; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--cyan); margin: 0 0 0.9rem; font-family: 'IBM Plex Mono', monospace;
+  }
+  .hero h1 {
+    font-size: clamp(2rem, 4vw, 2.8rem); margin: 0 0 1rem; line-height: 1.1;
+    color: var(--ink);
+  }
+  .dek { color: var(--ink-soft); font-size: 1.1rem; max-width: 38rem; }
+
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--felt-line);
+    border-radius: 10px;
+    padding: 2rem clamp(1.5rem, 4vw, 2.75rem);
+    margin: 0 1.5rem 1.5rem;
+    box-shadow: 0 30px 70px -30px rgba(4, 2, 10, 0.75);
+  }
+  .panel h2 {
+    font-size: 1.35rem;
+    margin: 0 0 1rem;
+    color: var(--ink);
+  }
+  .panel p, .panel li {
+    color: var(--ink-soft);
+    font-size: 1.02rem;
+    line-height: 1.65;
+  }
+  .panel p + p { margin-top: 1rem; }
+  .panel ol {
+    margin: 0 0 1rem;
+    padding-left: 1.3rem;
+  }
+  .panel ol li + li { margin-top: 0.4rem; }
+
+  /* The sample-size note gets the same gold-edged treatment as inline
+     stat callouts in posts, so its caution reads as a design signal too */
+  .panel.callout {
+    border: 1px solid rgba(232, 178, 63, 0.35);
+    background: rgba(9, 6, 18, 0.4);
+  }
+  .panel.callout h2 { color: var(--gold); }
+
+  .contact {
+    color: var(--ink-dim);
+    font-size: 0.85rem;
+    padding: 0 1.5rem;
+  }
+
+  @media (max-width: 48rem) {
+    .about { padding: 2.5rem 0 3.5rem; }
+    .hero { padding: 1.5rem 1.25rem; }
+    .panel { margin: 0 1rem 1.25rem; padding: 1.5rem 1.25rem; }
+    .contact { padding: 0 1.25rem; }
+  }
+</style>
