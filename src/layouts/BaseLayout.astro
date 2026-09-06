@@ -82,7 +82,11 @@ const articleSchema = isPost
         --panel-raised: #2f2350;
         --ink: #f1ecf9;
         --ink-soft: #a99cc7;
-        --ink-dim: #776a99;
+        /* Brightened from the original #776a99 — that value sat at ~3.3:1
+           against --panel, below the WCAG AA 4.5:1 floor for small text
+           (footer copy, post meta, ledger labels). This passes 4.5:1+
+           against felt, panel, and panel-raised. */
+        --ink-dim: #968cb0;
         /* Jackpot gold — the Bad Beat signage color */
         --gold: #e8b23f;
         --gold-soft: #c99a3a;
@@ -186,9 +190,32 @@ const articleSchema = isPost
         font-size: 0.78rem;
         color: var(--ink-dim);
       }
+
+      /* Skip link — invisible until keyboard-focused, then drops into
+         view above everything so tab order doesn't force a keyboard or
+         screen-reader user through the nav on every single page. */
+      .skip-link {
+        position: absolute;
+        top: -3rem;
+        left: 1rem;
+        z-index: 100;
+        background: var(--gold);
+        color: var(--felt-deep);
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.85rem;
+        font-weight: 600;
+        padding: 0.6rem 1.1rem;
+        border-radius: 6px;
+        text-decoration: none;
+        transition: top 0.15s ease;
+      }
+      .skip-link:focus {
+        top: 1rem;
+      }
     </style>
   </head>
   <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
     <header class="site-header">
       <nav>
         <a class="brand" href="/">Equity Drift</a>
