@@ -9,15 +9,23 @@ interface Props {
   updatedDate?: Date;
   tags?: string[];
   stats?: Stat[];
+  slug: string;
 }
 
-const { title, description, pubDate, updatedDate, tags = [], stats = [] } = Astro.props;
+const { title, description, pubDate, updatedDate, tags = [], stats = [], slug } = Astro.props;
 
 const dateFmt = (d: Date) =>
   d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 ---
 
-<BaseLayout title={title} description={description} pubDate={pubDate} updatedDate={updatedDate} isPost>
+<BaseLayout
+  title={title}
+  description={description}
+  pubDate={pubDate}
+  updatedDate={updatedDate}
+  image={`/og/${slug}.png`}
+  isPost
+>
   <main class="post-wrap">
     {stats.length > 0 && (
       <aside class="ledger-rail" aria-label="Hand tracker summary">
