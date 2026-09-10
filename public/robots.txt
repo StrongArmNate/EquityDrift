@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://equitydriftpoker.ca/sitemap-index.xml
+# Sitemap line removed temporarily — @astrojs/sitemap is disabled in
+# astro.config.mjs pending a build-crash fix. Add back once re-enabled:
+# Sitemap: https://equitydriftpoker.ca/sitemap-index.xml
