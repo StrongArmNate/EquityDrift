@@ -1,0 +1,98 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { tagSlug } from '../../utils/tags';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  const bySlug = new Map<string, { label: string; posts: typeof posts }>();
+
+  for (const post of posts) {
+    for (const tag of post.data.tags) {
+      const slug = tagSlug(tag);
+      const entry = bySlug.get(slug);
+      if (entry) entry.posts.push(post);
+      else bySlug.set(slug, { label: tag, posts: [post] });
+    }
+  }
+
+  return Array.from(bySlug.entries()).map(([slug, { label, posts }]) => ({
+    params: { tag: slug },
+    props: { label, posts },
+  }));
+}
+
+const { label, posts } = Astro.props;
+const sorted = posts
+  .slice()
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<BaseLayout title={`#${label}`} description={`Equity Drift posts tagged #${label}.`}>
+  <main class="tag-page" id="main-content">
+    <section class="hero">
+      <p class="eyebrow mono">Tag</p>
+      <h1>#{label}</h1>
+      <p class="dek">
+        {sorted.length} post{sorted.length === 1 ? '' : 's'} tagged #{label}.
+      </p>
+    </section>
+
+    <ul class="post-list">
+      {sorted.map((post) => (
+        <li>
+          <a href={`/blog/${post.slug}/`}>
+            <h2>{post.data.title}</h2>
+            <p class="mono meta">
+              {post.data.pubDate.toLocaleDateString('en-US', {
+                year: 'numeric', month: 'long', day: 'numeric',
+              })}
+            </p>
+            <p class="excerpt">{post.data.description}</p>
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <p class="back"><a href="/tags/">&larr; All tags</a></p>
+  </main>
+</BaseLayout>
+
+<style>
+  .tag-page { max-width: 50rem; margin: 0 auto; padding: 4rem 1.5rem 5rem; }
+
+  .hero { padding: 2.75rem clamp(1.5rem, 4vw, 3.5rem); margin-bottom: 2.5rem; }
+  .eyebrow {
+    font-size: 0.75rem; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--cyan); margin: 0 0 0.9rem; font-family: 'IBM Plex Mono', monospace;
+  }
+  .hero h1 { font-size: clamp(2rem, 4vw, 2.8rem); margin: 0 0 1rem; color: var(--ink); }
+  .dek { color: var(--ink-soft); font-size: 1.1rem; }
+
+  /* Same treatment as the homepage post list, so a tag page reads as a
+     filtered view of the same list rather than a different feature. */
+  .post-list {
+    list-style: none; margin: 0; padding: 0;
+    background: var(--panel);
+    border: 1px solid var(--felt-line);
+    border-radius: 10px;
+    box-shadow: 0 30px 70px -30px rgba(4, 2, 10, 0.75);
+    overflow: hidden;
+  }
+  .post-list li {
+    border-top: 1px solid var(--felt-line);
+    border-left: 3px solid transparent;
+    padding: 2rem clamp(1.5rem, 4vw, 3rem);
+    transition: border-color 0.15s ease;
+  }
+  .post-list li:first-child { border-top: none; }
+  .post-list li:hover { border-left-color: var(--cyan); }
+  .post-list a { text-decoration: none; color: inherit; display: block; }
+  .post-list h2 { font-size: 1.4rem; margin: 0 0 0.4rem; color: var(--ink); }
+  .post-list a:hover h2 { color: var(--gold); }
+  .meta { font-size: 0.7rem; color: var(--ink-dim); margin: 0 0 0.6rem; font-family: 'IBM Plex Mono', monospace; }
+  .excerpt { margin: 0; color: var(--ink-soft); }
+
+  .back { margin-top: 2rem; padding: 0 1.5rem; }
+  .back a { font-family: 'IBM Plex Mono', monospace; font-size: 0.85rem; }
+</style>
