@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import NewsletterSignup from '../components/NewsletterSignup.astro';
 import { getCollection } from 'astro:content';
 
 const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
@@ -37,6 +38,8 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
         </li>
       ))}
     </ul>
+
+    <NewsletterSignup />
   </main>
 </BaseLayout>
 

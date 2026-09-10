@@ -14,6 +14,7 @@ const { title, description, pubDate, updatedDate, isPost = false, image = '/og/h
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const ogImageURL = new URL(image, Astro.site);
 const siteName = 'Equity Drift';
+const authorName = 'Nate Armstrong';
 
 // Article structured data — only emitted on post pages.
 // This is what qualifies a page for rich results / "People also ask" style treatment.
@@ -25,7 +26,7 @@ const articleSchema = isPost
       description,
       datePublished: pubDate?.toISOString(),
       dateModified: (updatedDate ?? pubDate)?.toISOString(),
-      author: { '@type': 'Person', name: siteName },
+      author: { '@type': 'Person', name: authorName },
       publisher: { '@type': 'Organization', name: siteName },
       mainEntityOfPage: canonicalURL.toString(),
     }
@@ -37,7 +38,11 @@ const articleSchema = isPost
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
     <title>{title} · {siteName}</title>
     <meta name="description" content={description} />
@@ -221,6 +226,7 @@ const articleSchema = isPost
         <a class="brand" href="/">Equity Drift</a>
         <div class="links">
           <a href="/">Posts</a>
+          <a href="/tags/">Tags</a>
           <a href="/about/">About</a>
           <a href="/rss.xml">RSS</a>
         </div>
@@ -231,10 +237,6 @@ const articleSchema = isPost
 
     <footer class="site-footer">
       &copy; {new Date().getFullYear()} Equity Drift — hand-tracked PLO study notes.
-      <br />
-      <a href="https://github.com/StrongArmNate/EquityDrift" target="_blank" rel="noopener noreferrer">
-        Corrections or questions? Open an issue on GitHub.
-      </a>
     </footer>
   </body>
 </html>
